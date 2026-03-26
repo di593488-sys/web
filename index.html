@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 공모전</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>오늘의 공모전</h1>
+  <div id="content">불러오는 중...</div>
+
+  <script>
+    fetch('./contests.md')
+      .then(res => res.text())
+      .then(text => {
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        let html = '<ul>';
+        for (const line of lines) {
+          if (line.startsWith('- ')) {
+            html += `<li>${line.substring(2)}</li>`;
+          }
+        }
+        html += '</ul>';
+        document.getElementById('content').innerHTML = html;
+      })
+      .catch(() => {
+        document.getElementById('content').textContent = '공모전 목록을 불러오지 못했습니다.';
+      });
+  </script>
+</body>
+</html>
