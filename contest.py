@@ -202,7 +202,7 @@ def main():
     print("링크 수집:", len(links))
 
     data = []
-    for item in links[:12]:
+    for item in links[:30]:
         try:
             organizer, deadline = parse_detail(item["link"])
             data.append({
