@@ -1,50 +1,169 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>오늘의 공모전</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    h1 {
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 10px;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    li {
-      margin-bottom: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공모전 자동 업데이트</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 30px;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.updated {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+.title a {
+    text-decoration: none;
+    color: #111;
+}
+.title a:hover {
+    color: #0066cc;
+}
+.meta {
+    color: #555;
+    margin: 8px 0;
+    font-size: 14px;
+}
+.empty {
+    text-align: center;
+    color: #666;
+    margin-top: 50px;
+}
+</style>
 </head>
 <body>
-  <h1>오늘의 공모전</h1>
-  <div id="content">불러오는 중...</div>
+<div class="container">
+    <h1>🔥 오늘의 공모전</h1>
+    <div class="updated">업데이트: 2026-03-26 20:25</div>
+    <div class="grid">
 
-  <script>
-    fetch('./contests.md')
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.split('\n').filter(line => line.trim() !== '');
-        let html = '<ul>';
-        for (const line of lines) {
-          if (line.startsWith('- ')) {
-            html += `<li>${line.substring(2)}</li>`;
-          }
-        }
-        html += '</ul>';
-        document.getElementById('content').innerHTML = html;
-      })
-      .catch(() => {
-        document.getElementById('content').textContent = '공모전 목록을 불러오지 못했습니다.';
-      });
-  </script>
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105145" target="_blank">제2회 꿈을 짓다! 건축 아이디어 공모전</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-02-21 ~ 2026-04-15</div>
+            <div class="meta">🏢 주최기관: 시티문화재단</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105361" target="_blank">[산업통상부] 2026 엔지니어링산업 경진대회</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-03-03 ~ 2026-04-30</div>
+            <div class="meta">🏢 주최기관: 산업통상부 / 한국엔지니어링협회</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105706" target="_blank">​[하나금융그룹] 하나 청년 금융인재 양성 프로젝트 참가자 모집</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-03-09 ~ 2026-04-06</div>
+            <div class="meta">🏢 주최기관: 하나금융그룹 / 아이들과미래재단</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=103811" target="_blank">한국세무사회 캐릭터 마스코트 디자인 공모전</a>
+            </div>
+            <div class="meta">📅 마감일: 2025-12-01 ~ 2026-03-31</div>
+            <div class="meta">🏢 주최기관: 한국세무사회</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105735" target="_blank">(4주) 신춘문예 작가님에게 글쓰기를 배워보세요! 참여자 모집 중</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-03-14 ~ 2026-03-27</div>
+            <div class="meta">🏢 주최기관: 작필(作筆</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105948" target="_blank">2026년도 제31회 경기도 건축문화상 공모전 (계획작품 부문 / 사용승인 건축물 부문)</a>
+            </div>
+            <div class="meta">📅 마감일: ※ 우편접수 시 내 도착분에 한함</div>
+            <div class="meta">🏢 주최기관: 경기건축문화제 추진위원회 / 대한건축사협회 경기도건축사회, 경기도</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105362" target="_blank">제10회 소비자지향성 개선과제 공모전</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-03-03 ~ 2026-06-15</div>
+            <div class="meta">🏢 주최기관: 공정거래위원회 / 한국소비자원</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105519" target="_blank">제8회 밀크T 창작동화 공모전</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-05-04 ~ 2026-05-10</div>
+            <div class="meta">🏢 주최기관: ㈜천재교육, ㈜천재교과서 / 밀크T</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105517" target="_blank">제7기 과기정통부 LMO SAFETY 기자단 모집</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-03-09 ~ 2026-04-05</div>
+            <div class="meta">🏢 주최기관: 과학기술정보통신부 / 국가연구안전관리본부</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105705" target="_blank">2026 생활 속 목재이용 국민참여 공모전 (목재 공감(共感) 키트)</a>
+            </div>
+            <div class="meta">📅 마감일: ■ : 2026. 3. 3.(화) ~ 4. 17.(금) 17시까지</div>
+            <div class="meta">🏢 주최기관: 목재문화진흥회</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105407" target="_blank">2026 광화문글판 대학생 에세이 공모전</a>
+            </div>
+            <div class="meta">📅 마감일: ■ : 2026. 3.4(수) ~ 4.5(일)</div>
+            <div class="meta">🏢 주최기관: 교보생명</div>
+        </div>
+
+        <div class="card">
+            <div class="title">
+                <a href="https://www.wevity.com/?c=find&s=1&gub=1&gbn=view&gp=1&ix=105566" target="_blank">제13회 산업안전보건 조사자료 논문 경진대회</a>
+            </div>
+            <div class="meta">📅 마감일: 2026-03-10 ~ 2026-05-31</div>
+            <div class="meta">🏢 주최기관: 한국산업안전보건공단 산업안전보건연구원</div>
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
