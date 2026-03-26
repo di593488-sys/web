@@ -199,7 +199,6 @@ h1 {{
 
 def main():
     links = get_contest_links()
-    print("링크 수집:", len(links))
 
     data = []
     for item in links[:30]:
