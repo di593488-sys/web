@@ -6,14 +6,13 @@ import requests
 from bs4 import BeautifulSoup
 
 
-LIST_URL = "https://www.wevity.com/?c=find&s=1&gub=1"
-BASE_URL = "https://www.wevity.com/"
+LIST_URL = "https://www.contestkorea.com/sub/list.php?int_gbn=1"
+BASE_URL = "https://www.contestkorea.com"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Referer": "https://www.wevity.com/",
-    "Connection": "keep-alive"
+    "Referer": "https://www.contestkorea.com/",
 }
 
 
@@ -23,6 +22,10 @@ def fetch_html(url: str) -> str:
     return res.text
 
 
+def clean_text(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
 def collect_links() -> list[dict]:
     html = fetch_html(LIST_URL)
     soup = BeautifulSoup(html, "html.parser")
@@ -30,22 +33,28 @@ def collect_links() -> list[dict]:
     links = []
     seen = set()
 
+    # contestkorea는 목록/상세 모두 sub/ 로 많이 잡히므로
+    # a 태그 전체에서 상세페이지처럼 보이는 것만 필터링
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
-        title = a.get_text(" ", strip=True)
+        title = clean_text(a.get_text(" ", strip=True))
 
         if not title:
             continue
 
         full_url = urljoin(BASE_URL, href)
 
-        if "ix=" not in full_url:
+        # 목록에 섞여 있는 메뉴/광고/카테고리 제거
+        if "contestkorea.com/sub/" not in full_url:
             continue
-        if "gub=1" not in full_url:
+        if "list.php" in full_url:
             continue
-        if "view" not in full_url:
+        if len(title) < 6:
             continue
-        if len(title) < 4:
+
+        # 공모전/대회 느낌 없는 링크 제거
+        keywords = ["공모전", "대회", "모집", "어워즈", "해커톤", "백일장", "서포터즈", "공방전", "공모"]
+        if not any(k in title for k in keywords):
             continue
 
         if full_url in seen:
@@ -65,28 +74,39 @@ def parse_detail(url: str) -> tuple[str, str]:
     soup = BeautifulSoup(html, "html.parser")
 
     text = soup.get_text("\n", strip=True)
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    lines = [clean_text(line) for line in text.splitlines() if clean_text(line)]
 
     organizer = "정보 없음"
     deadline = "정보 없음"
 
     for i, line in enumerate(lines):
-        if "주최/주관" in line:
-            value = line.replace("주최/주관", "").strip()
-            if not value and i + 1 < len(lines):
-                value = lines[i + 1].strip()
-            if value:
+        # 주최
+        if "주최" in line or "주관" in line:
+            value = line
+            value = value.replace("주최", "").replace("주관", "").replace(".", " ").replace(":", " ")
+            value = clean_text(value)
+
+            if len(value) <= 2 and i + 1 < len(lines):
+                value = clean_text(lines[i + 1])
+
+            if value and value != "정보 없음":
                 organizer = value
 
-        if "접수기간" in line:
-            value = line.replace("접수기간", "").strip()
-            if not value and i + 1 < len(lines):
-                value = lines[i + 1].strip()
-            if value:
-                deadline = value
-
-    organizer = re.sub(r"\s+", " ", organizer).strip()
-    deadline = re.sub(r"\s+", " ", deadline).strip()
+        # 접수기간
+        if "접수기간" in line or "접수 " in line:
+            m = re.search(r"(\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}\s*[~～\-]\s*\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2})", line)
+            if m:
+                deadline = clean_text(m.group(1))
+            else:
+                # D-day라도 잡아두기
+                d = re.search(r"D-\d+", line)
+                if d:
+                    deadline = d.group(0)
+                elif i + 1 < len(lines):
+                    next_line = lines[i + 1]
+                    m2 = re.search(r"(\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}\s*[~～\-]\s*\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2})", next_line)
+                    if m2:
+                        deadline = clean_text(m2.group(1))
 
     return organizer, deadline
 
@@ -94,12 +114,11 @@ def parse_detail(url: str) -> tuple[str, str]:
 def build_html(data: list[dict]) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    def sort_key(item: dict) -> int:
-        # D-숫자가 있으면 마감 임박순 정렬
-        m = re.search(r"D-(\d+)", item["deadline"])
-        if m:
-            return int(m.group(1))
-        return 999999
+    def sort_key(item: dict) -> tuple[int, str]:
+        d = re.search(r"D-(\d+)", item["deadline"])
+        if d:
+            return (0, f"{int(d.group(1)):06d}")
+        return (1, item["deadline"])
 
     sorted_data = sorted(data, key=sort_key)
 
