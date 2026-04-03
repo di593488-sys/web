@@ -132,84 +132,428 @@ def build_html(data: list[dict]) -> str:
     * {{
       box-sizing: border-box;
     }}
+
+    :root {{
+      --bg: #f8fafc;
+      --card: rgba(255, 255, 255, 0.92);
+      --text: #0f172a;
+      --sub: #64748b;
+      --line: #e2e8f0;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --danger: #dc2626;
+      --warning: #ea580c;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }}
+
     body {{
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      color: #111;
+      background:
+        radial-gradient(circle at top left, #dbeafe 0%, transparent 30%),
+        radial-gradient(circle at top right, #e0e7ff 0%, transparent 28%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      color: var(--text);
     }}
+
     .container {{
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 40px 20px 60px;
+      padding: 48px 20px 72px;
     }}
+
+    .hero {{
+      text-align: center;
+      margin-bottom: 32px;
+    }}
+
+    .hero-badge {{
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }}
+
     h1 {{
-      text-align: center;
-      font-size: 52px;
-      margin: 0 0 20px;
+      margin: 0;
+      font-size: clamp(32px, 6vw, 56px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
     }}
+
+    .hero-desc {{
+      margin: 14px auto 0;
+      max-width: 720px;
+      font-size: 17px;
+      color: var(--sub);
+      line-height: 1.7;
+    }}
+
     .updated {{
-      text-align: center;
-      color: #777;
-      font-size: 18px;
-      margin-bottom: 40px;
+      margin-top: 18px;
+      color: var(--sub);
+      font-size: 15px;
     }}
+
+    .toolbar {{
+      margin: 36px 0 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }}
+
+    .toolbar-left,
+    .toolbar-right {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }}
+
+    .search-box {{
+      position: relative;
+      min-width: 260px;
+      flex: 1 1 320px;
+    }}
+
+    .search-box input {{
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 16px 0 42px;
+      font-size: 15px;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }}
+
+    .search-box input:focus {{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }}
+
+    .search-icon {{
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 15px;
+      pointer-events: none;
+    }}
+
+    select {{
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 14px;
+      background: #fff;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }}
+
+    select:focus {{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }}
+
+    .result-count {{
+      font-size: 14px;
+      color: var(--sub);
+      font-weight: 600;
+    }}
+
     .grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 24px;
     }}
+
     .card {{
-      background: #fff;
-      border-radius: 18px;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius);
       padding: 22px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+      position: relative;
+      overflow: hidden;
     }}
+
+    .card::before {{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), transparent 40%);
+      pointer-events: none;
+    }}
+
+    .card:hover {{
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(37, 99, 235, 0.12);
+      border-color: rgba(37, 99, 235, 0.18);
+    }}
+
+    .card-top {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }}
+
+    .tag {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+
+    .deadline-badge {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+      background: #f1f5f9;
+      color: #334155;
+    }}
+
+    .deadline-badge.urgent {{
+      background: #fee2e2;
+      color: var(--danger);
+    }}
+
+    .deadline-badge.soon {{
+      background: #ffedd5;
+      color: var(--warning);
+    }}
+
     .title {{
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.5;
-      margin-bottom: 14px;
-    }}
-    .title a {{
-      color: #111;
-      text-decoration: none;
-    }}
-    .title a:hover {{
-      color: #0b67d0;
-    }}
-    .meta {{
-      font-size: 15px;
-      color: #555;
-      margin: 8px 0;
-      line-height: 1.5;
+      margin: 0 0 14px;
       word-break: keep-all;
     }}
+
+    .meta-list {{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }}
+
+    .meta {{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      color: #475569;
+      line-height: 1.6;
+      word-break: keep-all;
+    }}
+
+    .meta-label {{
+      min-width: 68px;
+      font-weight: 700;
+      color: #334155;
+    }}
+
+    .card-footer {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(226, 232, 240, 0.9);
+    }}
+
+    .link-btn {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: var(--text);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }}
+
+    .card:hover .link-btn {{
+      background: var(--accent);
+    }}
+
     .empty {{
       text-align: center;
-      color: #666;
+      color: var(--sub);
       font-size: 18px;
-      margin-top: 60px;
+      margin-top: 70px;
+      padding: 48px 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }}
+
+    .hidden {{
+      display: none !important;
+    }}
+
+    @media (max-width: 768px) {{
+      .container {{
+        padding: 28px 16px 48px;
+      }}
+
+      .toolbar {{
+        padding: 14px;
+      }}
+
+      .toolbar-left,
+      .toolbar-right {{
+        width: 100%;
+      }}
+
+      .search-box {{
+        min-width: 100%;
+      }}
+
+      select {{
+        flex: 1;
+        min-width: 0;
+      }}
+
+      .card {{
+        padding: 18px;
+      }}
+
+      .title {{
+        font-size: 18px;
+      }}
+
+      .meta {{
+        font-size: 14px;
+      }}
+
+      .card-top {{
+        flex-direction: column;
+        align-items: flex-start;
+      }}
+
+      .deadline-badge {{
+        min-width: auto;
+      }}
     }}
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔥 오늘의 공모전</h1>
-    <div class="updated">업데이트: {now}</div>
-    <div class="grid">
+    <section class="hero">
+      <div class="hero-badge">CONTEST ARCHIVE</div>
+      <h1>🔥 오늘의 공모전</h1>
+      <div class="hero-desc">
+        최신 공모전 정보를 한눈에 보고, 검색과 정렬로 원하는 공모전을 빠르게 찾아보세요.
+      </div>
+      <div class="updated">업데이트: {now}</div>
+    </section>
+
+    <section class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-box">
+          <span class="search-icon">🔎</span>
+          <input type="text" id="searchInput" placeholder="제목 또는 주최기관으로 검색" />
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <select id="sortSelect">
+          <option value="default">기본순</option>
+          <option value="deadline">마감순</option>
+          <option value="title">제목순</option>
+        </select>
+
+        <select id="categorySelect">
+          <option value="all">전체</option>
+          <option value="urgent">마감임박</option>
+          <option value="normal">일반</option>
+        </select>
+
+        <div class="result-count">총 <span id="resultCount">{len(sorted_data)}</span>개</div>
+      </div>
+    </section>
+
+    <div class="grid" id="contestGrid">
 """
 
     for item in sorted_data:
         html += f"""
-      <div class="card">
-        <div class="title">
-          <a href="{item['link']}" target="_blank" rel="noopener noreferrer">{item['title']}</a>
+      <a class="card"
+         href="{item['link']}"
+         target="_blank"
+         rel="noopener noreferrer"
+         data-title="{item['title']}"
+         data-organizer="{item['organizer']}"
+         data-deadline="{item['deadline']}">
+        <div class="card-top">
+          <div class="tag">공모전</div>
+          <div class="deadline-badge">D-day 계산중</div>
         </div>
-        <div class="meta">📅 마감일: {item['deadline']}</div>
-        <div class="meta">🏢 주최기관: {item['organizer']}</div>
-      </div>
+
+        <div class="title">{item['title']}</div>
+
+        <div class="meta-list">
+          <div class="meta">
+            <span class="meta-label">마감일</span>
+            <span>{item['deadline']}</span>
+          </div>
+          <div class="meta">
+            <span class="meta-label">주최기관</span>
+            <span>{item['organizer']}</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span style="color:#64748b; font-size:14px;">자세히 보기</span>
+          <span class="link-btn">바로가기 ↗</span>
+        </div>
+      </a>
 """
 
     html += """
@@ -223,6 +567,133 @@ def build_html(data: list[dict]) -> str:
 
     html += """
   </div>
+
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const categorySelect = document.getElementById("categorySelect");
+    const cards = Array.from(document.querySelectorAll(".card"));
+    const grid = document.getElementById("contestGrid");
+    const resultCount = document.getElementById("resultCount");
+
+    function parseDeadline(text) {
+      if (!text) return null;
+
+      const match = text.match(/(\\d{4})[.\\-/ ](\\d{1,2})[.\\-/ ](\\d{1,2})/);
+      if (!match) return null;
+
+      const year = Number(match[1]);
+      const month = Number(match[2]) - 1;
+      const day = Number(match[3]);
+
+      const date = new Date(year, month, day);
+      if (isNaN(date.getTime())) return null;
+      return date;
+    }
+
+    function getDDay(deadlineText) {
+      const deadline = parseDeadline(deadlineText);
+      if (!deadline) return null;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      deadline.setHours(0, 0, 0, 0);
+
+      const diff = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+      return diff;
+    }
+
+    function updateDeadlineBadges() {
+      cards.forEach(card => {
+        const deadlineText = card.dataset.deadline || "";
+        const badge = card.querySelector(".deadline-badge");
+        const dday = getDDay(deadlineText);
+
+        if (dday === null) {
+          badge.textContent = "일정확인";
+          return;
+        }
+
+        if (dday < 0) {
+          badge.textContent = "마감";
+          badge.classList.add("urgent");
+          card.dataset.category = "closed";
+        } else if (dday === 0) {
+          badge.textContent = "D-Day";
+          badge.classList.add("urgent");
+          card.dataset.category = "urgent";
+        } else if (dday <= 3) {
+          badge.textContent = `D-${dday}`;
+          badge.classList.add("urgent");
+          card.dataset.category = "urgent";
+        } else if (dday <= 7) {
+          badge.textContent = `D-${dday}`;
+          badge.classList.add("soon");
+          card.dataset.category = "soon";
+        } else {
+          badge.textContent = `D-${dday}`;
+          card.dataset.category = "normal";
+        }
+      });
+    }
+
+    function filterAndSortCards() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const category = categorySelect.value;
+      const sort = sortSelect.value;
+
+      let visibleCards = cards.filter(card => {
+        const title = (card.dataset.title || "").toLowerCase();
+        const organizer = (card.dataset.organizer || "").toLowerCase();
+        const cardCategory = card.dataset.category || "normal";
+
+        const matchesKeyword =
+          title.includes(keyword) || organizer.includes(keyword);
+
+        let matchesCategory = true;
+        if (category === "urgent") {
+          matchesCategory = cardCategory === "urgent" || cardCategory === "soon";
+        } else if (category === "normal") {
+          matchesCategory = cardCategory === "normal";
+        }
+
+        return matchesKeyword && matchesCategory;
+      });
+
+      cards.forEach(card => card.classList.add("hidden"));
+
+      if (sort === "deadline") {
+        visibleCards.sort((a, b) => {
+          const aDate = parseDeadline(a.dataset.deadline || "");
+          const bDate = parseDeadline(b.dataset.deadline || "");
+
+          if (!aDate && !bDate) return 0;
+          if (!aDate) return 1;
+          if (!bDate) return -1;
+
+          return aDate - bDate;
+        });
+      } else if (sort === "title") {
+        visibleCards.sort((a, b) => {
+          return (a.dataset.title || "").localeCompare(b.dataset.title || "", "ko");
+        });
+      }
+
+      visibleCards.forEach(card => {
+        card.classList.remove("hidden");
+        grid.appendChild(card);
+      });
+
+      resultCount.textContent = visibleCards.length;
+    }
+
+    updateDeadlineBadges();
+    filterAndSortCards();
+
+    searchInput.addEventListener("input", filterAndSortCards);
+    sortSelect.addEventListener("change", filterAndSortCards);
+    categorySelect.addEventListener("change", filterAndSortCards);
+  </script>
 </body>
 </html>
 """
