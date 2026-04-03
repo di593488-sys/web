@@ -367,7 +367,7 @@
       <div class="hero-desc">
         최신 공모전 정보를 한눈에 보고, 검색과 정렬로 원하는 공모전을 빠르게 찾아보세요.
       </div>
-      <div class="updated">업데이트: 2026-04-03 12:15</div>
+      <div class="updated">업데이트: 2026-04-03 12:27</div>
     </section>
 
     <section class="toolbar">
@@ -877,12 +877,13 @@
     function parseDeadline(text) {
       if (!text) return null;
 
-      const match = text.match(/(\d{4})[.\-/ ](\d{1,2})[.\-/ ](\d{1,2})/);
-      if (!match) return null;
+      const matches = [...text.matchAll(/(\d{4})[.\-/ ](\d{1,2})[.\-/ ](\d{1,2})/g)];
+      if (!matches.length) return null;
 
-      const year = Number(match[1]);
-      const month = Number(match[2]) - 1;
-      const day = Number(match[3]);
+      const last = matches[matches.length - 1];
+      const year = Number(last[1]);
+      const month = Number(last[2]) - 1;
+      const day = Number(last[3]);
 
       const date = new Date(year, month, day);
       if (isNaN(date.getTime())) return null;
@@ -907,8 +908,11 @@
         const badge = card.querySelector(".deadline-badge");
         const dday = getDDay(deadlineText);
 
+        badge.classList.remove("urgent", "soon");
+
         if (dday === null) {
           badge.textContent = "일정확인";
+          card.dataset.category = "normal";
           return;
         }
 

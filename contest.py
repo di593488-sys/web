@@ -33,8 +33,6 @@ def collect_links() -> list[dict]:
     links = []
     seen = set()
 
-    # contestkorea는 목록/상세 모두 sub/ 로 많이 잡히므로
-    # a 태그 전체에서 상세페이지처럼 보이는 것만 필터링
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
         title = clean_text(a.get_text(" ", strip=True))
@@ -44,7 +42,6 @@ def collect_links() -> list[dict]:
 
         full_url = urljoin(BASE_URL, href)
 
-        # 목록에 섞여 있는 메뉴/광고/카테고리 제거
         if "contestkorea.com/sub/" not in full_url:
             continue
         if "list.php" in full_url:
@@ -52,7 +49,6 @@ def collect_links() -> list[dict]:
         if len(title) < 6:
             continue
 
-        # 공모전/대회 느낌 없는 링크 제거
         keywords = ["공모전", "대회", "모집", "어워즈", "해커톤", "백일장", "서포터즈", "공방전", "공모"]
         if not any(k in title for k in keywords):
             continue
@@ -80,7 +76,6 @@ def parse_detail(url: str) -> tuple[str, str]:
     deadline = "정보 없음"
 
     for i, line in enumerate(lines):
-        # 주최
         if "주최" in line or "주관" in line:
             value = line
             value = value.replace("주최", "").replace("주관", "").replace(".", " ").replace(":", " ")
@@ -92,19 +87,23 @@ def parse_detail(url: str) -> tuple[str, str]:
             if value and value != "정보 없음":
                 organizer = value
 
-        # 접수기간
         if "접수기간" in line or "접수 " in line:
-            m = re.search(r"(\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}\s*[~～\-]\s*\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2})", line)
+            m = re.search(
+                r"(\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}\s*[~～\-]\s*\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2})",
+                line
+            )
             if m:
                 deadline = clean_text(m.group(1))
             else:
-                # D-day라도 잡아두기
                 d = re.search(r"D-\d+", line)
                 if d:
                     deadline = d.group(0)
                 elif i + 1 < len(lines):
                     next_line = lines[i + 1]
-                    m2 = re.search(r"(\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}\s*[~～\-]\s*\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2})", next_line)
+                    m2 = re.search(
+                        r"(\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2}\s*[~～\-]\s*\d{2,4}[.\-/]\d{1,2}[.\-/]\d{1,2})",
+                        next_line
+                    )
                     if m2:
                         deadline = clean_text(m2.group(1))
 
@@ -579,12 +578,13 @@ def build_html(data: list[dict]) -> str:
     function parseDeadline(text) {
       if (!text) return null;
 
-      const match = text.match(/(\\d{4})[.\\-/ ](\\d{1,2})[.\\-/ ](\\d{1,2})/);
-      if (!match) return null;
+      const matches = [...text.matchAll(/(\\d{4})[.\\-/ ](\\d{1,2})[.\\-/ ](\\d{1,2})/g)];
+      if (!matches.length) return null;
 
-      const year = Number(match[1]);
-      const month = Number(match[2]) - 1;
-      const day = Number(match[3]);
+      const last = matches[matches.length - 1];
+      const year = Number(last[1]);
+      const month = Number(last[2]) - 1;
+      const day = Number(last[3]);
 
       const date = new Date(year, month, day);
       if (isNaN(date.getTime())) return null;
@@ -609,8 +609,11 @@ def build_html(data: list[dict]) -> str:
         const badge = card.querySelector(".deadline-badge");
         const dday = getDDay(deadlineText);
 
+        badge.classList.remove("urgent", "soon");
+
         if (dday === null) {
           badge.textContent = "일정확인";
+          card.dataset.category = "normal";
           return;
         }
 
